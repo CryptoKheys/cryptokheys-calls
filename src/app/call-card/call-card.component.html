@@ -2,9 +2,9 @@
   <mat-card-header>
     <img mat-card-avatar alt="Logo de l'asset considéré" style="object-fit: contain;" [src]="call[1].image"/>
     <mat-card-title>
-      <a [href]="'https://www.coingecko.com/en/coins/'+ call[1].id">{{ call[1].name }}</a>
+      {{ call[1].name }}
     </mat-card-title>
-    <mat-card-subtitle>{{ call[1].author }} <span class="bg-red-500 rounded-lg p-1">+323%</span></mat-card-subtitle>
+    <mat-card-subtitle>{{ call[1].author }} <span *ngIf="call[2]" class="rounded-lg p-1 ml-6" [class]="pourcentage().color">{{ pourcentage().value | number: '1.1-2' }}%</span></mat-card-subtitle>
   </mat-card-header>
   <mat-card-content *ngIf="!collapsed">
     <mat-list *ngIf="call[2]">

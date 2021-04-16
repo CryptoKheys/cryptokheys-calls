@@ -12,15 +12,6 @@
   local('MaterialIcons-Regular')
 }
 
-html, body {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @import '~@angular/material/theming';
@@ -60,4 +51,14 @@ $ck2-theme: mat-light-theme((
   background-color: mat-color($ck2-primary);
   padding: 1rem;
   color: white;
+}
+
+html, body {
+  height: 100%;
+  background-color: #f4f4f4;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
