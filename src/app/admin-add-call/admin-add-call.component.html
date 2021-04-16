@@ -1,0 +1,106 @@
+<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+    <mat-option
+            *ngFor="let coin of filteredCoinsList; let i = index"
+            [value]="coin.name"
+    >
+        {{ coin.name }} ({{ coin.symbol.toLowerCase() }})
+    </mat-option>
+</mat-autocomplete>
+<div
+        class="flex flex-col md:flex-row flex-wrap justify-center w-full mx-auto"
+>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Ajouter un call
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="callForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <mat-form-field appearance="fill" class="w-full">
+                        <mat-label>Asset</mat-label>
+                        <input
+                                type="text"
+                                formControlName="name"
+                                matInput
+                                [matAutocomplete]="auto"
+                                id="name"
+                                name="name"
+                                class="form-control"
+                        />
+                    </mat-form-field>
+                </div>
+                <div class="form-group">
+                    <mat-form-field appearance="fill" class="w-full">
+                        <mat-label> Auteur du call</mat-label>
+                        <input
+                                type="text"
+                                id="author"
+                                name="author"
+                                matInput
+                                class="form-control"
+                                formControlName="author"
+                        />
+                    </mat-form-field>
+                </div>
+                <div class="form-group">
+                    <mat-form-field appearance="fill" class="w-full">
+                        <mat-label>Prix lors du call</mat-label>
+                        <input
+                                type="text"
+                                id="callPrice"
+                                name="callPrice"
+                                matInput
+                                class="form-control"
+                                formControlName="callPrice"
+                        />
+                    </mat-form-field>
+                </div>
+
+                <div class="form-group">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Date du Call</mat-label>
+                        <input matInput [matDatepicker]="picker" id="callDate" name="callDate" class="form-control"
+                               formControlName="callDate">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <button mat-stroked-button class="mx-auto text-center" type="submit">
+                    Enregistrer
+                </button>
+            </form>
+        </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="coin.author || coin.name">
+        <mat-card-header>
+            <img [src]="coin.image" alt="" mat-card-avatar/>
+            <mat-card-title>
+                {{ coin.name }}
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <p *ngIf="coin.platforms.ethereum" class="hidden md:inline">
+                {{ coin.platforms.ethereum }}
+            </p>
+            <p>Rank : {{ coinInfo.mcapRank }}</p>
+            <p>Prix lors du call : $ {{ coin.callPrice }}</p>
+            <p>Prix actuel : $ {{ coinInfo.current_price }}</p>
+            <p>
+                PNL depuis le call :
+                <span class="font-bold"
+                >{{
+                    (100 * (coinInfo.current_price - coin.callPrice)) / coin.callPrice
+                        | number: "1.2-2"
+                    }}
+                    %</span
+                >
+            </p>
+            <p class="text-left">Auteur du call : {{ coin.author }}</p>
+            {{ coin.id }}
+            {{ coin.symbol.toUpperCase() }}
+        </mat-card-content>
+    </mat-card>
+</div>

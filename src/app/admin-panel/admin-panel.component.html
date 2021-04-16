@@ -1,0 +1,6 @@
+<p class="text-center">
+  <button mat-raised-button (click)="openDialog()" color="primary">Add Call</button>
+</p>
+<div *ngIf="callsService.callsList" class="mt-8 flex flex-wrap justify-around items-center flex-col space-x-0 md:flex-row">
+<app-admin-list *ngFor="let call of callsService.callsList" [call]="call" class="mb-4 w-64"></app-admin-list>
+</div>
