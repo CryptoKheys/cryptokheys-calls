@@ -4,9 +4,9 @@
     <mat-card-title>
       <a [href]="'https://www.coingecko.com/en/coins/'+ call[1].id">{{ call[1].name }}</a>
     </mat-card-title>
-    <mat-card-subtitle>{{ call[1].author }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ call[1].author }} <span class="bg-red-500 rounded-lg p-1">+323%</span></mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content>
+  <mat-card-content *ngIf="!collapsed">
     <mat-list *ngIf="call[2]">
       <mat-list-item>
         <p matLine>{{ call[1].callPrice | number: '1.1-5' }}$ le {{ call[1].callDate | date }}</p>

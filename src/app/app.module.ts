@@ -27,7 +27,7 @@ import { AdminListComponent } from './admin-list/admin-list.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDialogModule } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogModule} from '@angular/material/dialog';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -61,7 +61,7 @@ registerLocaleData(localeFr);
     MatTooltipModule,
     MatDialogModule,
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'fr-FR' }, MatDatepickerModule],
+  providers: [{ provide: LOCALE_ID, useValue: 'fr-FR' }, MatDatepickerModule, { provide: MAT_DIALOG_DATA, useValue: {}}],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

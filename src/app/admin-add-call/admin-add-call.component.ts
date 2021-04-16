@@ -11,7 +11,6 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AdminAddCallComponent implements OnInit, OnDestroy {
   callForm!: FormGroup;
-  coinsList!: any[];
   filteredCoinsList!: Call[];
   coin = {} as Call;
   coinInfo = {} as CallInfo;
@@ -41,23 +40,12 @@ export class AdminAddCallComponent implements OnInit, OnDestroy {
     this.callForm.controls.callDate.valueChanges.subscribe(
       (data) => (this.coin.callDate = data)
     );
-
-    this.httpClient
-      .get('https://api.coingecko.com/api/v3/coins/list?include_platform=true')
-      .subscribe(
-        (resp: any) => {
-          this.coinsList = resp;
-        },
-        (error) => {
-          console.log('Erreur ! : ' + error);
-        }
-      );
   }
 
   private _filter(value: string): Call[] {
     const filterValue = value.toLowerCase();
 
-    return this.coinsList.filter(
+    return this.callsService.coinsList.filter(
       (option) =>
         option.symbol.toLowerCase() === filterValue ||
         option.name.toLowerCase().includes(filterValue)
@@ -85,7 +73,7 @@ export class AdminAddCallComponent implements OnInit, OnDestroy {
     this.coin = {
       author: this.coin.author,
       callPrice: this.coin.callPrice,
-      ...this.coinsList.filter((value) => value.name === data.option.value)[0],
+      ...this.callsService.coinsList.filter((value) => value.name === data.option.value)[0],
     };
     this.getInfo(this.coin);
   }

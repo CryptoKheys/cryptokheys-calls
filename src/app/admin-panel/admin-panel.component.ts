@@ -13,12 +13,11 @@ export class AdminPanelComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.callsService.callsList.length === 0) {
-      this.getCalls();
+      this.callsService.getCalls();
     }
-  }
-
-  getCalls(): void {
-    this.callsService.getCalls();
+    if(this.callsService.coinsList.length === 0) {
+      this.callsService.getCoinsList();
+    }
   }
 
   openDialog() {
