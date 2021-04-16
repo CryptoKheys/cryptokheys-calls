@@ -1,10 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CallsListComponent } from './calls-list/calls-list.component';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+import { CallsListComponent } from './calls-list/calls-list.component';
+import { CallsListResolver } from './calls-list/calls-list.resolver';
 
 const routes: Routes = [
-  { path: '', component: CallsListComponent },
+  {
+    path: '', 
+    resolve: {
+      pm: CallsListResolver
+    },
+    component: CallsListComponent 
+  },
   { path: 'admin', component: AdminPanelComponent },
 ];
 
@@ -12,4 +19,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

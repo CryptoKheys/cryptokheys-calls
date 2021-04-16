@@ -1,33 +1,34 @@
-import { NgModule, LOCALE_ID } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { registerLocaleData } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { CallsListComponent } from './calls-list/calls-list.component';
-import { CallCardComponent } from './call-card/call-card.component';
-import { AdminPanelComponent } from './admin-panel/admin-panel.component';
-import { AdminAddCallComponent } from './admin-add-call/admin-add-call.component';
-import { AdminUpdateCallComponent } from './admin-update-call/admin-update-call.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatCardModule } from '@angular/material/card';
+import localeFr from '@angular/common/locales/fr';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-
-import { registerLocaleData } from '@angular/common';
-import localeFr from '@angular/common/locales/fr';
-import { MatNativeDateModule } from '@angular/material/core';
-import { AdminListComponent } from './admin-list/admin-list.component';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {MAT_DIALOG_DATA, MatDialogModule} from '@angular/material/dialog';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AdminAddCallComponent } from './admin-add-call/admin-add-call.component';
+import { AdminListComponent } from './admin-list/admin-list.component';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+import { AdminUpdateCallComponent } from './admin-update-call/admin-update-call.component';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { CallCardComponent } from './call-card/call-card.component';
+import { CallsListComponent } from './calls-list/calls-list.component';
+import { CallsListResolver } from './calls-list/calls-list.resolver';
+
+
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -61,7 +62,7 @@ registerLocaleData(localeFr);
     MatTooltipModule,
     MatDialogModule,
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'fr-FR' }, MatDatepickerModule, { provide: MAT_DIALOG_DATA, useValue: {}}],
+  providers: [CallsListResolver, { provide: LOCALE_ID, useValue: 'fr-FR' }, MatDatepickerModule, { provide: MAT_DIALOG_DATA, useValue: {}}],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

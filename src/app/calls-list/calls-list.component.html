@@ -1,3 +1,11 @@
-<div *ngIf="callsService.callsList" class="mt-8 flex flex-wrap justify-around items-center flex-col space-x-0 md:flex-row">
-  <app-call-card *ngFor="let call of callsService.callsList" [call]="call"  class="mb-4 w-64 cursor-pointer" (click)="openDialog(call)"></app-call-card>
+<div
+  *ngIf="callsService.callsList"
+  class="mt-8 flex flex-wrap justify-around items-center flex-col space-x-0 md:flex-row"
+>
+  <app-call-card
+    *ngFor="let call of pm.calls"
+    [call]="call"
+    class="mb-4 w-64 cursor-pointer"
+    (click)="openDialog(call)"
+  ></app-call-card>
 </div>
