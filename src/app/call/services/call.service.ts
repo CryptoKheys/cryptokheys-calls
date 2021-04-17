@@ -23,8 +23,8 @@ export class CallService {
 
   constructor(private http: HttpClient) {}
 
-  public getCalls(): Observable<Call[]> {
-    if (this.calls.length) {
+  public getCalls(refresh: boolean = false): Observable<Call[]> {
+    if (refresh && this.calls.length) {
       return of(this.calls);
     }
 

@@ -1,0 +1,64 @@
+<p class="text-center">
+  <button mat-raised-button (click)="createCall()" color="primary">
+    Add Call
+  </button>
+</p>
+
+<table class="mat-elevation-z8 w-screen" mat-table [dataSource]="pm.calls">
+  <ng-container matColumnDef="image">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let call">
+      <img
+        mat-card-avatar
+        alt="Logo de l'asset considéré"
+        style="object-fit: contain"
+        [src]="call.image"
+      />
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let call">{{ call.name }}</td>
+  </ng-container>
+  displayedColumns
+  <ng-container matColumnDef="author">
+    <th mat-header-cell *matHeaderCellDef>Author</th>
+    <td mat-cell *matCellDef="let call">{{ call.author }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="callPrice">
+    <th mat-header-cell *matHeaderCellDef>Call price (USD)</th>
+    <td mat-cell *matCellDef="let call">{{ call.callPrice }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="percentage">
+    <th mat-header-cell *matHeaderCellDef>Percentage</th>
+    <td mat-cell *matCellDef="let call">
+      <span class="rounded-lg p-1 ml-6" [class]="percentage(call).color"
+        >{{ percentage(call).value | number: "1.1-2" }}%</span
+      >
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let call">
+      <button
+        mat-icon-button
+        matTooltip="Supprimer le call"
+        (click)="deleteCall(call)"
+      >
+        <mat-icon class="mr-4 cursor-pointer hover:text-red-600"
+          >delete</mat-icon
+        >
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="pm.displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: pm.displayedColumns"></tr>
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" colspan="4">Aucun résultat</td>
+  </tr>
+</table>
