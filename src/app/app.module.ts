@@ -26,6 +26,7 @@ import { AdminUpdateCallComponent } from "./admin-update-call/admin-update-call.
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { CallCardComponent } from "./call-card/call-card.component";
+import { CallModule } from "./call/call.module";
 import { CallsListComponent } from "./calls-list/calls-list.component";
 import { CallsListResolver } from "./calls-list/calls-list.resolver";
 
@@ -63,6 +64,7 @@ registerLocaleData(localeFr);
     MatDialogModule,
   ],
   providers: [
+    CallModule,
     CallsListResolver,
     AdminPanelResolver,
     { provide: LOCALE_ID, useValue: "fr-FR" },
