@@ -1,18 +1,18 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Call, CallInfo } from '../models/call';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { CallsService } from '../services/calls.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient } from "@angular/common/http";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { CallDb, CallInfo } from "../models/call";
+import { CallsService } from "../services/calls.service";
 
 @Component({
-  selector: 'app-admin-add-call',
-  templateUrl: './admin-add-call.component.html',
-  styleUrls: ['./admin-add-call.component.scss'],
+  selector: "app-admin-add-call",
+  templateUrl: "./admin-add-call.component.html",
+  styleUrls: ["./admin-add-call.component.scss"],
 })
 export class AdminAddCallComponent implements OnInit, OnDestroy {
   callForm!: FormGroup;
-  filteredCoinsList!: Call[];
-  coin = {} as Call;
+  filteredCoinsList!: CallDb[];
+  coin = {} as CallDb;
   coinInfo = {} as CallInfo;
 
   // TODO: test pour voir
@@ -34,7 +34,7 @@ export class AdminAddCallComponent implements OnInit, OnDestroy {
     });
 
     this.callForm.controls.callPrice.valueChanges.subscribe(
-      (data) => (this.coin.callPrice = parseFloat(data.replace(/,/g, '.')))
+      (data) => (this.coin.callPrice = parseFloat(data.replace(/,/g, ".")))
     );
 
     this.callForm.controls.callDate.valueChanges.subscribe(
@@ -42,7 +42,7 @@ export class AdminAddCallComponent implements OnInit, OnDestroy {
     );
   }
 
-  private _filter(value: string): Call[] {
+  private _filter(value: string): CallDb[] {
     const filterValue = value.toLowerCase();
 
     return this.callsService.coinsList.filter(
@@ -55,10 +55,10 @@ export class AdminAddCallComponent implements OnInit, OnDestroy {
 
   initForm(): void {
     this.callForm = this.formBuilder.group({
-      author: '',
-      name: '',
-      callPrice: '',
-      callDate: '',
+      author: "",
+      name: "",
+      callPrice: "",
+      callDate: "",
     });
   }
 
@@ -73,30 +73,32 @@ export class AdminAddCallComponent implements OnInit, OnDestroy {
     this.coin = {
       author: this.coin.author,
       callPrice: this.coin.callPrice,
-      ...this.callsService.coinsList.filter((value) => value.name === data.option.value)[0],
+      ...this.callsService.coinsList.filter(
+        (value) => value.name === data.option.value
+      )[0],
     };
     this.getInfo(this.coin);
   }
 
-  getInfo(coin: Call): any {
+  getInfo(coin: CallDb): any {
     if (coin.platforms.ethereum) {
       console.log(coin.platforms.ethereum);
       this.coin.GeckoURL =
-        'https://api.coingecko.com/api/v3/coins/ethereum/contract/' +
+        "https://api.coingecko.com/api/v3/coins/ethereum/contract/" +
         coin.platforms.ethereum;
 
       this.httpClient
         .get(
-          'https://api.coingecko.com/api/v3/coins/ethereum/contract/' +
+          "https://api.coingecko.com/api/v3/coins/ethereum/contract/" +
             coin.platforms.ethereum
         )
         .subscribe((data: any) => {
           this.dispatchInfo(data);
         });
     } else {
-      this.coin.GeckoURL = 'https://api.coingecko.com/api/v3/coins/' + coin.id;
+      this.coin.GeckoURL = "https://api.coingecko.com/api/v3/coins/" + coin.id;
       this.httpClient
-        .get('https://api.coingecko.com/api/v3/coins/' + coin.id)
+        .get("https://api.coingecko.com/api/v3/coins/" + coin.id)
         .subscribe((data: any) => {
           this.dispatchInfo(data);
         });

@@ -1,30 +1,65 @@
-<mat-card *ngIf="call !== undefined">
+<mat-card *ngIf="call">
   <mat-card-header>
-    <img mat-card-avatar alt="Logo de l'asset considéré" style="object-fit: contain;" [src]="call[1].image"/>
+    <img
+      mat-card-avatar
+      alt="Logo de l'asset considéré"
+      style="object-fit: contain"
+      [src]="call.image"
+    />
     <mat-card-title>
-      {{ call[1].name }}
+      {{ call.name }}
     </mat-card-title>
-    <mat-card-subtitle>{{ call[1].author }} <span *ngIf="call[2]" class="rounded-lg p-1 ml-6" [class]="pourcentage().color">{{ pourcentage().value | number: '1.1-2' }}%</span></mat-card-subtitle>
+    <mat-card-subtitle
+      >{{ call.author }}
+      <span
+        *ngIf="call"
+        class="rounded-lg p-1 ml-6"
+        [class]="pourcentage().color"
+        >{{ pourcentage().value | number: "1.1-2" }}%</span
+      ></mat-card-subtitle
+    >
   </mat-card-header>
   <mat-card-content *ngIf="!collapsed">
-    <mat-list *ngIf="call[2]">
+    <mat-list *ngIf="call">
       <mat-list-item>
-        <p matLine>{{ call[1].callPrice | number: '1.1-5' }}$ le {{ call[1].callDate | date }}</p>
-        <p matLine>Prix actuel : {{ call[2].current_price | number: '1.1-5' }}$</p>
-        <p matLine>mcap actuel : {{ call[2].market_cap }}$ ({{ call[2].mcapRank }})</p>
+        <p matLine>
+          {{ call.callPrice | number: "1.1-5" }}$ le {{ call.callDate | date }}
+        </p>
+        <p matLine>Prix actuel : {{ call.currentPrice | number: "1.1-5" }}$</p>
+        <p matLine>
+          mcap actuel : {{ call.marketCap }}$ ({{ call.marketCapRank }})
+        </p>
         <p matLine>{{ mcapRefactor() }} en refacto</p>
       </mat-list-item>
       <mat-list-item>
-        <p matLine>{{ call[2].price_change_24h | number: '1.1-2' }}$ / 24h</p>
-        <p matLine>{{ call[2].price_change_percentage_24h | number: '1.1-2' }}% / 24h</p>
-        <p matLine>{{ call[2].price_change_percentage_7d | number: '1.1-2' }}% / 7d</p>
-        <p matLine>{{ call[2].price_change_percentage_14d | number: '1.1-2' }}% / 14d</p>
-        <p matLine>{{ call[2].price_change_percentage_30d | number: '1.1-2' }}% / 30d</p>
+        <p matLine>{{ call.priceChange24h | number: "1.1-2" }}$ / 24h</p>
+        <p matLine>
+          {{ call.priceChangePercentage24h | number: "1.1-2" }}% / 24h
+        </p>
+        <p matLine>
+          {{ call.priceChangePercentage7d | number: "1.1-2" }}% / 7d
+        </p>
+        <p matLine>
+          {{ call.priceChangePercentage14d | number: "1.1-2" }}% / 14d
+        </p>
+        <p matLine>
+          {{ call.priceChangePercentage30d | number: "1.1-2" }}% / 30d
+        </p>
       </mat-list-item>
     </mat-list>
     <mat-card-actions class="text-center">
-      <a [href]="'https://www.coingecko.com/en/coins/'+ call[1].id" mat-stroked-button color="primary">CoinGecko</a>
-      <a [href]="'https://www.coingecko.com/en/coins/'+ call[1].id + '#markets'" mat-stroked-button color="primary">Markets</a>
+      <a
+        [href]="'https://www.coingecko.com/en/coins/' + call.id"
+        mat-stroked-button
+        color="primary"
+        >CoinGecko</a
+      >
+      <a
+        [href]="'https://www.coingecko.com/en/coins/' + call.id + '#markets'"
+        mat-stroked-button
+        color="primary"
+        >Markets</a
+      >
     </mat-card-actions>
   </mat-card-content>
 </mat-card>

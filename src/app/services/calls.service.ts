@@ -1,13 +1,14 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
-import { catchError, map } from "rxjs/operators";
-import { AddResult, Call, CallDTO, CallInfo } from "../models/call";
+import { forkJoin, Observable, of } from "rxjs";
+import { catchError, map, mergeMap } from "rxjs/operators";
+import { AddResult, Call, CallDb, CallDTO, CallInfo } from "../models/call";
 
 @Injectable({
   providedIn: "root",
 })
 export class CallsService {
+  calls: Call[] = [];
   callsList: CallDTO[] = [];
   coinsList: any[] = [];
   firebaseURL =
@@ -16,19 +17,47 @@ export class CallsService {
 
   constructor(private http: HttpClient) {}
 
-  public getCalls(): Observable<CallDTO[]> {
-    if (!this.callsList.length) {
-      return this.http.get(`${this.firebaseURL}/${this.firebaseDB}.json`).pipe(
-        map((h) => {
-          this.callsList = Object.entries(h);
-          this.getCallsInfo();
-          return this.callsList;
-        }),
-        catchError(this.handleError("getCalls", []))
-      );
-    }
+  public getCalls(): Observable<Call[]> {
+    const firebaseDbUrl: string = `${this.firebaseURL}/${this.firebaseDB}.json`;
 
-    return of(this.callsList);
+    return this.http.get(firebaseDbUrl).pipe(
+      mergeMap((h: any) => {
+        return forkJoin(
+          Object.entries<{ [id: string]: any }>(h).map(([id, callDb]) => {
+            if (!callDb.GeckoURL) {
+              return of(this.mapCall(id, callDb));
+            }
+            return this.http.get(callDb.GeckoURL).pipe(
+              map((coinInfo: any) => {
+                return this.mapCall(id, callDb, coinInfo);
+              })
+            );
+          })
+        );
+      })
+    );
+  }
+
+  private mapCall(callDbId: string, callDb: any, coinInfo?: any): Call {
+    return {
+      id: callDbId,
+      name: callDb.name,
+      author: callDb.author,
+      callPrice: callDb.callPrice,
+      callDate: callDb.callDate,
+      currentPrice: coinInfo?.market_data.current_price.usd,
+      marketCap: coinInfo?.market_data.market_cap.usd,
+      marketCapRank: coinInfo?.market_data.market_cap_rank,
+      priceChange24h: coinInfo?.market_data.price_change_24h,
+      priceChangePercentage24h:
+        coinInfo?.market_data.price_change_percentage_24h,
+      priceChangePercentage7d: coinInfo?.market_data.price_change_percentage_7d,
+      priceChangePercentage14d:
+        coinInfo?.market_data.price_change_percentage_14d,
+      priceChangePercentage30d:
+        coinInfo?.market_data.price_change_percentage_30d,
+      image: callDb.image,
+    };
   }
 
   public getCoinsList(): Observable<any[]> {
@@ -60,7 +89,7 @@ export class CallsService {
       .get(call[1].GeckoURL)
       .pipe(catchError(this.handleError("singleCallInfo", [])))
       .subscribe((res) => {
-        console.log(res);
+        // console.log(res);
         call[2] = this.dispatchCallInfo(res);
         if (push) {
           this.callsList.push(call);
@@ -86,8 +115,8 @@ export class CallsService {
     };
   }
 
-  addCallToDB(call?: Call): void {
-    const mockCall: Call = {
+  addCallToDB(call?: CallDb): void {
+    const mockCall: CallDb = {
       author: "Mathieu",
       image:
         "https://assets.coingecko.com/coins/images/1/small/bitcoin.png?1547033579",
@@ -118,7 +147,7 @@ export class CallsService {
       });
   }
 
-  private addCallToList(dbID: string, callToAdd: Call): void {
+  private addCallToList(dbID: string, callToAdd: CallDb): void {
     const defCall: CallDTO = [dbID, callToAdd];
     this.singleCallInfo(defCall, true);
   }

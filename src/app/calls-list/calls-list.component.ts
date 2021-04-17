@@ -23,6 +23,7 @@ export class CallsListComponent implements OnInit {
   ngOnInit(): void {
     this._route.data.subscribe((data: Data) => {
       this.pm = data.pm;
+      console.log(this.pm);
     });
   }
 
