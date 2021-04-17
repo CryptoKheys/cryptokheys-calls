@@ -1,20 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import {CallsService} from "./services/calls.service";
+import { Component, OnInit } from "@angular/core";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
-  title = 'ckcalls';
+  title = "ckcalls";
 
-  constructor(private callsService: CallsService) {
-  }
+  constructor() {}
 
-  ngOnInit() {
-    this.callsService.getCalls()
-    this.callsService.getCoinsList()
-  }
-
+  ngOnInit() {}
 }

@@ -1,4 +1,4 @@
-export interface Call {
+export interface CallDb {
   author: string;
   image: string;
   id: string;
@@ -28,8 +28,28 @@ export interface CallInfo {
   price_change_percentage_30d: number;
 }
 
-export type CallDTO = [string, Call, ...CallInfo[]];
+export type CallDTO = [string, CallDb, ...CallInfo[]];
 
 export interface AddResult {
   name: string;
+}
+
+export interface Call {
+  id?: string;
+  name?: string;
+  author?: string;
+  image?: string;
+  callPrice?: number;
+  callDate?: string;
+  running: boolean;
+  closedDate: string | Date | number;
+  closedPrice: number;
+  currentPrice?: number;
+  marketCap?: number;
+  marketCapRank?: number;
+  priceChange24h?: number;
+  priceChangePercentage24h?: number;
+  priceChangePercentage7d?: number;
+  priceChangePercentage14d?: number;
+  priceChangePercentage30d?: number;
 }

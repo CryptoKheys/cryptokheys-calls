@@ -1,19 +1,26 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Call, CallInfo } from '../models/call';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { CallsService } from '../services/calls.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient } from "@angular/common/http";
+import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { CallDb, CallInfo } from "../models/call";
+import { CallsService } from "../services/calls.service";
 
 @Component({
-  selector: 'app-admin-add-call',
-  templateUrl: './admin-add-call.component.html',
-  styleUrls: ['./admin-add-call.component.scss'],
+  selector: "app-admin-add-call",
+  templateUrl: "./admin-add-call.component.html",
+  styleUrls: ["./admin-add-call.component.scss"],
 })
-export class AdminAddCallComponent implements OnInit, OnDestroy {
-  callForm!: FormGroup;
-  filteredCoinsList!: Call[];
-  coin = {} as Call;
-  coinInfo = {} as CallInfo;
+export class AdminAddCallComponent implements OnInit {
+  public isLoading: boolean = true;
+
+  public callForm: FormGroup;
+
+  private coinsList: any[];
+  public filteredCoinsList: any[];
+
+  private coinGeckoUrl: string;
+  public coinInfo: CallInfo;
+  public urlImage: string;
+  public coin: any;
 
   // TODO: test pour voir
 
@@ -23,88 +30,80 @@ export class AdminAddCallComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder
   ) {}
 
-  ngOnInit(): void {
-    this.initForm();
-    this.callForm.controls.name.valueChanges.subscribe((data) => {
-      this.filteredCoinsList = this._filter(data);
+  public ngOnInit(): void {
+    this.callsService.getCoinsList().subscribe((coins: any[]) => {
+      this.coinsList = coins;
+
+      this.initForm();
+      this.isLoading = false;
     });
-
-    this.callForm.controls.author.valueChanges.subscribe((data) => {
-      this.coin.author = data;
-    });
-
-    this.callForm.controls.callPrice.valueChanges.subscribe(
-      (data) => (this.coin.callPrice = parseFloat(data.replace(/,/g, '.')))
-    );
-
-    this.callForm.controls.callDate.valueChanges.subscribe(
-      (data) => (this.coin.callDate = data)
-    );
   }
 
-  private _filter(value: string): Call[] {
-    const filterValue = value.toLowerCase();
-
-    return this.callsService.coinsList.filter(
-      (option) =>
-        option.symbol.toLowerCase() === filterValue ||
-        option.name.toLowerCase().includes(filterValue)
-    );
-  }
-  ngOnDestroy(): void {}
-
-  initForm(): void {
+  private initForm(): void {
     this.callForm = this.formBuilder.group({
-      author: '',
-      name: '',
-      callPrice: '',
-      callDate: '',
+      author: "",
+      name: "",
+      callPrice: "",
+      callDate: "",
+    });
+
+    this.callForm.controls.name.valueChanges.subscribe((data) => {
+      const filterValue = data.toLowerCase();
+
+      this.filteredCoinsList = this.coinsList.filter(
+        (option) =>
+          option.symbol.toLowerCase() === filterValue ||
+          option.name.toLowerCase().includes(filterValue)
+      );
     });
   }
 
-  onSubmit(): void {
-    // this.coin.author = form.value.author;
-    console.log(this.coin);
-    this.callsService.addCallToDB(this.coin);
-  }
+  public onSubmit(): void {
+    if (this.callForm.valid) {
+      const newCall: CallDb = {
+        author: this.callForm.controls.author.value,
+        image: this.urlImage,
+        id: this.coin.id,
+        name: this.coin.name,
+        symbol: this.coin.symbol,
+        why: "because",
+        platforms: {
+          ethereum: this.coin.platforms.ethereum ? true : false,
+        },
+        callPrice: parseFloat(
+          this.callForm.controls.callPrice.value.replace(/,/g, ".")
+        ),
+        callDate: this.callForm.controls.callDate.value,
+        GeckoURL: this.coinGeckoUrl,
+        running: true,
+        closedDate: null,
+        closedPrice: null,
+      };
 
-  selected(data: { option: { value: any } }): void {
-    console.log(data.option.value);
-    this.coin = {
-      author: this.coin.author,
-      callPrice: this.coin.callPrice,
-      ...this.callsService.coinsList.filter((value) => value.name === data.option.value)[0],
-    };
-    this.getInfo(this.coin);
-  }
-
-  getInfo(coin: Call): any {
-    if (coin.platforms.ethereum) {
-      console.log(coin.platforms.ethereum);
-      this.coin.GeckoURL =
-        'https://api.coingecko.com/api/v3/coins/ethereum/contract/' +
-        coin.platforms.ethereum;
-
-      this.httpClient
-        .get(
-          'https://api.coingecko.com/api/v3/coins/ethereum/contract/' +
-            coin.platforms.ethereum
-        )
-        .subscribe((data: any) => {
-          this.dispatchInfo(data);
-        });
-    } else {
-      this.coin.GeckoURL = 'https://api.coingecko.com/api/v3/coins/' + coin.id;
-      this.httpClient
-        .get('https://api.coingecko.com/api/v3/coins/' + coin.id)
-        .subscribe((data: any) => {
-          this.dispatchInfo(data);
-        });
+      this.callsService.addCallToDB(newCall);
     }
   }
 
-  dispatchInfo(data: any): void {
-    this.coin.image = data.image.small;
-    this.coinInfo = this.callsService.dispatchCallInfo(data);
+  public selected(data: { option: { value: any } }): void {
+    this.coin = this.coinsList.find(
+      (value) => value.name === data.option.value
+    );
+
+    this.getCoinInfo();
+  }
+
+  private getCoinInfo(): any {
+    let coinGeckoUrl: string = "https://api.coingecko.com/api/v3/coins/";
+    if (this.coin.platforms.ethereum) {
+      coinGeckoUrl += `ethereum/contract/${this.coin.platforms.ethereum}`;
+    } else {
+      coinGeckoUrl += `${this.coin.id}`;
+    }
+
+    this.coinGeckoUrl = coinGeckoUrl;
+    this.httpClient.get(coinGeckoUrl).subscribe((data: any) => {
+      this.urlImage = data.image.small;
+      this.coinInfo = this.callsService.dispatchCallInfo(data);
+    });
   }
 }
