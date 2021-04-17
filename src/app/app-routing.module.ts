@@ -1,22 +1,29 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { AdminPanelComponent } from './admin-panel/admin-panel.component';
-import { CallsListComponent } from './calls-list/calls-list.component';
-import { CallsListResolver } from './calls-list/calls-list.resolver';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { AdminPanelComponent } from "./admin-panel/admin-panel.component";
+import { AdminPanelResolver } from "./admin-panel/admin-panel.resolver";
+import { CallsListComponent } from "./calls-list/calls-list.component";
+import { CallsListResolver } from "./calls-list/calls-list.resolver";
 
 const routes: Routes = [
   {
-    path: '', 
+    path: "",
     resolve: {
-      pm: CallsListResolver
+      pm: CallsListResolver,
     },
-    component: CallsListComponent 
+    component: CallsListComponent,
   },
-  { path: 'admin', component: AdminPanelComponent },
+  {
+    path: "admin",
+    resolve: {
+      pm: AdminPanelResolver,
+    },
+    component: AdminPanelComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

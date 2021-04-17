@@ -18,8 +18,11 @@ export class CallsService {
   constructor(private http: HttpClient) {}
 
   public getCalls(): Observable<Call[]> {
-    const firebaseDbUrl: string = `${this.firebaseURL}/${this.firebaseDB}.json`;
+    if (this.calls.length) {
+      return of(this.calls);
+    }
 
+    const firebaseDbUrl: string = `${this.firebaseURL}/${this.firebaseDB}.json`;
     return this.http.get(firebaseDbUrl).pipe(
       mergeMap((h: any) => {
         return forkJoin(
@@ -34,6 +37,10 @@ export class CallsService {
             );
           })
         );
+      }),
+      map((calls: Call[]) => {
+        this.calls = calls;
+        return this.calls;
       })
     );
   }
@@ -43,8 +50,12 @@ export class CallsService {
       id: callDbId,
       name: callDb.name,
       author: callDb.author,
+      image: callDb.image,
       callPrice: callDb.callPrice,
       callDate: callDb.callDate,
+      running: callDb.running,
+      closedDate: callDb.closedDate,
+      closedPrice: callDb.closedPrice,
       currentPrice: coinInfo?.market_data.current_price.usd,
       marketCap: coinInfo?.market_data.market_cap.usd,
       marketCapRank: coinInfo?.market_data.market_cap_rank,
@@ -56,7 +67,6 @@ export class CallsService {
         coinInfo?.market_data.price_change_percentage_14d,
       priceChangePercentage30d:
         coinInfo?.market_data.price_change_percentage_30d,
-      image: callDb.image,
     };
   }
 
@@ -168,10 +178,9 @@ export class CallsService {
   }
 
   private deleteCallFromList(id: string): void {
-    const arrCallToDelete = this.callsList.filter((call) => call[0] === id);
-    if (arrCallToDelete.length === 1) {
-      const indexCallToDelete = this.callsList.indexOf(arrCallToDelete[0]);
-      this.callsList.splice(indexCallToDelete, 1);
+    const index: number = this.calls.findIndex((call: Call) => call.id === id);
+    if (index !== -1) {
+      this.calls.splice(index, 1);
     }
   }
 

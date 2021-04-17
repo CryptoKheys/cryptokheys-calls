@@ -2,10 +2,8 @@ import { Call } from "../models/call";
 
 export class CallsListModel {
   public calls: Call[];
-  public coins: any;
 
-  constructor(calls: Call[], coins: any) {
+  constructor(calls: Call[]) {
     this.calls = calls.filter((e) => e.id);
-    this.coins = coins;
   }
 }

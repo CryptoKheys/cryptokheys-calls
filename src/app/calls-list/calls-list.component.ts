@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute, Data } from "@angular/router";
 import { CallCardComponent } from "../call-card/call-card.component";
-import { CallDTO } from "../models/call";
+import { Call } from "../models/call";
 import { CallsService } from "../services/calls.service";
 import { CallsListModel } from "./calls-list.model";
 
@@ -23,13 +23,12 @@ export class CallsListComponent implements OnInit {
   ngOnInit(): void {
     this._route.data.subscribe((data: Data) => {
       this.pm = data.pm;
-      console.log(this.pm);
     });
   }
 
-  openDialog(argCall: CallDTO): void {
+  openDialog(call: Call): void {
     const dialogRef = this.dialog.open(CallCardComponent, {
-      data: { ...argCall },
+      data: { ...call },
     });
 
     dialogRef.afterClosed().subscribe((result) => {

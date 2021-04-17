@@ -38,8 +38,12 @@ export interface Call {
   id?: string;
   name?: string;
   author?: string;
+  image?: string;
   callPrice?: number;
   callDate?: string;
+  running: boolean;
+  closedDate: string | Date | number;
+  closedPrice: number;
   currentPrice?: number;
   marketCap?: number;
   marketCapRank?: number;
@@ -48,5 +52,4 @@ export interface Call {
   priceChangePercentage7d?: number;
   priceChangePercentage14d?: number;
   priceChangePercentage30d?: number;
-  image?: string;
 }
