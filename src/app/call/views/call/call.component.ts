@@ -4,7 +4,7 @@ import { ActivatedRoute, Data, Router } from "@angular/router";
 import { takeWhile } from "rxjs/operators";
 import { BaseComponent } from "src/app/components/base/base.component";
 import { ConfirmDialogComponent } from "src/app/components/confirm-dialog/confirm-dialog.component";
-import { Call } from "../../../models/call";
+import { Call } from "../../model/call.model";
 import { CallService } from "../../services/call.service";
 import { CallModel } from "./call.model";
 

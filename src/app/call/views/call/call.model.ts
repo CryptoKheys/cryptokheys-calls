@@ -1,4 +1,4 @@
-import { Call } from "../../../models/call";
+import { Call } from "../../model/call.model";
 
 export class CallModel {
   public isAdmin: boolean = false;

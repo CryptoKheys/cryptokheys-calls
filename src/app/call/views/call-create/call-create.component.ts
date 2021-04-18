@@ -9,7 +9,7 @@ import { ActivatedRoute, Data, Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { filter, first, map, takeWhile } from "rxjs/operators";
 import { BaseComponent } from "src/app/components/base/base.component";
-import { CallDb } from "src/app/models/call";
+import { CallDb } from "../../model/call.model";
 import { Coin, CoinInfo } from "../../model/coin.model";
 import { CallService } from "../../services/call.service";
 import { CallUtils } from "../../utils/call.utils";
