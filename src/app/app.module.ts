@@ -8,18 +8,19 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { CallModule } from "./call/call.module";
+
 registerLocaleData(localeFr);
 
 @NgModule({
-  declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule, BrowserAnimationsModule],
-  providers: [
-    CallModule,
-    { provide: LOCALE_ID, useValue: "fr-FR" },
-    MatDatepickerModule,
-    { provide: MAT_DIALOG_DATA, useValue: {} },
-  ],
-  bootstrap: [AppComponent],
+    declarations: [AppComponent],
+    imports: [BrowserModule, AppRoutingModule, BrowserAnimationsModule],
+    providers: [
+        CallModule,
+        { provide: LOCALE_ID, useValue: "fr-FR" },
+        MatDatepickerModule,
+        { provide: MAT_DIALOG_DATA, useValue: {} },
+    ],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}
 

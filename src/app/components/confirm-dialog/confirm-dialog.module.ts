@@ -4,8 +4,8 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { ConfirmDialogComponent } from "./confirm-dialog.component";
 
 @NgModule({
-  imports: [MatDialogModule, MatButtonModule],
-  declarations: [ConfirmDialogComponent],
-  exports: [ConfirmDialogComponent],
+    imports: [MatDialogModule, MatButtonModule],
+    declarations: [ConfirmDialogComponent],
+    exports: [ConfirmDialogComponent],
 })
 export class ConfirmDialogModule {}

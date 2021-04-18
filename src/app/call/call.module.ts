@@ -25,32 +25,32 @@ import { CallComponent } from "./views/call/call.component";
 import { CallResolver } from "./views/call/call.resolver";
 
 const MAT_MODULE = [
-  MatAutocompleteModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatButtonModule,
-  MatListModule,
-  MatDatepickerModule,
-  MatNativeDateModule,
-  MatIconModule,
-  MatDialogModule,
-  MatCardModule,
-  MatTableModule,
-  MatProgressSpinnerModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatListModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatIconModule,
+    MatDialogModule,
+    MatCardModule,
+    MatTableModule,
+    MatProgressSpinnerModule,
 ];
 
 @NgModule({
-  declarations: [CallComponent, CallCreateComponent],
-  imports: [
-    RouterModule,
-    CallRoutingModule,
-    CommonModule,
-    FormsModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    ConfirmDialogModule,
-    ...MAT_MODULE,
-  ],
-  providers: [CallService, CallResolver, CallCreateResolver, CallGuard],
+    declarations: [CallComponent, CallCreateComponent],
+    imports: [
+        RouterModule,
+        CallRoutingModule,
+        CommonModule,
+        FormsModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+        ConfirmDialogModule,
+        ...MAT_MODULE,
+    ],
+    providers: [CallService, CallResolver, CallCreateResolver, CallGuard],
 })
 export class CallModule {}

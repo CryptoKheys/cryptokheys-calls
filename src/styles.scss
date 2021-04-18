@@ -34,11 +34,11 @@ $ck2-warn: mat-palette($mat-red);
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
 $ck2-theme: mat-light-theme((
-  color: (
-    primary: $ck2-primary,
-    accent: $ck2-accent,
-    warn: $ck2-warn,
-  )
+        color: (
+                primary: $ck2-primary,
+                accent: $ck2-accent,
+                warn: $ck2-warn,
+        )
 ));
 
 // Include theme styles for core and each component used in your app.
