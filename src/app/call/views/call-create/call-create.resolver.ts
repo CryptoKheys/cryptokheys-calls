@@ -7,11 +7,11 @@ import { CallCreateModel } from "../call-create/call-create.model";
 
 @Injectable()
 export class CallCreateResolver implements Resolve<CallCreateModel> {
-    constructor(private readonly _callService: CallService) {}
+  constructor(private readonly _callService: CallService) {}
 
-    public resolve(): Observable<CallCreateModel> {
-        return forkJoin({
-            coins: this._callService.getCoinsList(),
-        }).pipe(map((data) => new CallCreateModel(data.coins)));
-    }
+  public resolve(): Observable<CallCreateModel> {
+    return forkJoin({
+      coins: this._callService.getCoinsList(),
+    }).pipe(map((data) => new CallCreateModel(data.coins)));
+  }
 }

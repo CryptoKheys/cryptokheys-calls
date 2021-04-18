@@ -1,12 +1,12 @@
 import { Component, OnDestroy } from "@angular/core";
 
 @Component({
-    template: "",
+  template: "",
 })
 export abstract class BaseComponent implements OnDestroy {
-    protected isAlive: boolean = true;
+  protected isAlive: boolean = true;
 
-    public ngOnDestroy(): void {
-        this.isAlive = false;
-    }
+  public ngOnDestroy(): void {
+    this.isAlive = false;
+  }
 }

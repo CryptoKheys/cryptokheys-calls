@@ -1,8 +1,8 @@
 <mat-autocomplete
-    #autoComplete='matAutocomplete'
-    (optionSelected)='onCoinSelected($event)'
+    #autoComplete="matAutocomplete"
+    (optionSelected)="onCoinSelected($event)"
 >
-    <mat-option *ngFor='let coin of filteredCoins | async' [value]='coin.name'>
+    <mat-option *ngFor="let coin of filteredCoins | async" [value]="coin.name">
         {{ coin.name }} ({{ coin.symbol.toLowerCase() }})
     </mat-option>
 </mat-autocomplete>
@@ -12,76 +12,76 @@
         <mat-card-title> Ajouter un call</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <form [formGroup]='form' (ngSubmit)='onSubmit()'>
-            <mat-form-field appearance='fill' class='w-full'>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <mat-form-field appearance="fill" class="w-full">
                 <mat-label>Name</mat-label>
                 <input
                     matInput
-                    formControlName='assetName'
-                    name='assetName'
-                    [matAutocomplete]='autoComplete'
+                    formControlName="assetName"
+                    name="assetName"
+                    [matAutocomplete]="autoComplete"
                 />
-                <mat-error *ngIf='form.controls.assetName.invalid'>{{
+                <mat-error *ngIf="form.controls.assetName.invalid">{{
                     getErrorMessage("assetName")
                     }}</mat-error>
             </mat-form-field>
-            <mat-form-field appearance='fill' class='w-full'>
+            <mat-form-field appearance="fill" class="w-full">
                 <mat-label>Author</mat-label>
-                <input matInput formControlName='author' name='author' />
-                <mat-error *ngIf='form.controls.author.invalid'>{{
+                <input matInput formControlName="author" name="author" />
+                <mat-error *ngIf="form.controls.author.invalid">{{
                     getErrorMessage("author")
                     }}</mat-error>
             </mat-form-field>
-            <mat-form-field appearance='fill' class='w-full'>
+            <mat-form-field appearance="fill" class="w-full">
                 <mat-label>Prix lors du call</mat-label>
                 <input
                     matInput
-                    formControlName='callPrice'
-                    name='callPrice'
-                    type='number'
+                    formControlName="callPrice"
+                    name="callPrice"
+                    type="number"
                 />
                 <span matPrefix>$&nbsp;</span>
-                <mat-error *ngIf='form.controls.callPrice.invalid'>{{
+                <mat-error *ngIf="form.controls.callPrice.invalid">{{
                     getErrorMessage("callPrice")
                     }}</mat-error>
             </mat-form-field>
-            <mat-form-field appearance='fill'>
+            <mat-form-field appearance="fill">
                 <mat-label>Date du Call</mat-label>
                 <input
                     matInput
-                    [matDatepicker]='datePicker'
-                    name='callDate'
-                    formControlName='callDate'
+                    [matDatepicker]="datePicker"
+                    name="callDate"
+                    formControlName="callDate"
                 />
                 <mat-datepicker-toggle
                     matSuffix
-                    [for]='datePicker'
+                    [for]="datePicker"
                 ></mat-datepicker-toggle>
                 <mat-datepicker #datePicker></mat-datepicker>
-                <mat-error *ngIf='form.controls.callDate.invalid'>{{
+                <mat-error *ngIf="form.controls.callDate.invalid">{{
                     getErrorMessage("callDate")
                     }}</mat-error>
             </mat-form-field>
-            <mat-error *ngIf='coinInfoForm.touched && coinInfoForm.invalid'
+            <mat-error *ngIf="coinInfoForm.touched && coinInfoForm.invalid"
             >Un problème lors de la récupération des informations est
                 subvenu
             </mat-error
             >
-            <button mat-stroked-button class='mx-auto text-center' type='submit'>
+            <button mat-stroked-button class="mx-auto text-center" type="submit">
                 Enregistrer
             </button>
         </form>
     </mat-card-content>
 </mat-card>
 
-<mat-spinner *ngIf='pm.isCoinInfoLoading'></mat-spinner>
+<mat-spinner *ngIf="pm.isCoinInfoLoading"></mat-spinner>
 
-<mat-card *ngIf='!pm.isCoinInfoLoading && coinInfoForm.valid'>
+<mat-card *ngIf="!pm.isCoinInfoLoading && coinInfoForm.valid">
     <mat-card-header>
         <img
-            *ngIf='coinInfoForm.value.urlImage'
-            [src]='coinInfoForm.value.urlImage'
-            alt=''
+            *ngIf="coinInfoForm.value.urlImage"
+            [src]="coinInfoForm.value.urlImage"
+            alt=""
             mat-card-avatar
         />
         <mat-card-title>
@@ -90,8 +90,8 @@
     </mat-card-header>
     <mat-card-content>
         <p
-            *ngIf='coinInfoForm.value.coin.platforms.ethereum'
-            class='hidden md:inline'
+            *ngIf="coinInfoForm.value.coin.platforms.ethereum"
+            class="hidden md:inline"
         >
             {{ coinInfoForm.value.coin.platforms.ethereum }}
         </p>
@@ -100,8 +100,8 @@
         <p>Prix actuel : $ {{ coinInfoForm.value.currentPrice }}</p>
         <p>
             PNL depuis le call :
-            <span class='font-bold'>{{ percentage }}</span>
+            <span class="font-bold">{{ percentage }}</span>
         </p>
-        <p class='text-left'>Auteur du call : {{ form.controls.author.value }}</p>
+        <p class="text-left">Auteur du call : {{ form.controls.author.value }}</p>
     </mat-card-content>
 </mat-card>

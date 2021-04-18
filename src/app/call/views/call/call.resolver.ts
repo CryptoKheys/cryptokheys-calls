@@ -7,11 +7,11 @@ import { CallModel } from "./call.model";
 
 @Injectable()
 export class CallResolver implements Resolve<CallModel> {
-    constructor(private readonly _callService: CallService) {}
+  constructor(private readonly _callService: CallService) {}
 
-    public resolve(): Observable<CallModel> {
-        return forkJoin({
-            calls: this._callService.getCalls(true),
-        }).pipe(map((data) => new CallModel(data.calls, true)));
-    }
+  public resolve(): Observable<CallModel> {
+    return forkJoin({
+      calls: this._callService.getCalls(true),
+    }).pipe(map((data) => new CallModel(data.calls, true)));
+  }
 }
