@@ -1,5 +1,6 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
+import { CallGuard } from "./guards/call.guard";
 import { CallCreateComponent } from "./views/call-create/call-create.component";
 import { CallCreateResolver } from "./views/call-create/call-create.resolver";
 import { CallComponent } from "./views/call/call.component";
@@ -18,7 +19,7 @@ const routes: Routes = [
       },
       {
         path: "add",
-        //canActivate: [],
+        canActivate: [CallGuard],
         component: CallCreateComponent,
         resolve: {
           pm: CallCreateResolver,

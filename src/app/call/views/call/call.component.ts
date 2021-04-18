@@ -1,6 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { ActivatedRoute, Data, Router } from "@angular/router";
+import { takeWhile } from "rxjs/operators";
+import { BaseComponent } from "src/app/components/base/base.component";
+import { ConfirmDialogComponent } from "src/app/components/confirm-dialog/confirm-dialog.component";
 import { Call } from "../../../models/call";
 import { CallService } from "../../services/call.service";
 import { CallModel } from "./call.model";
@@ -10,7 +13,7 @@ import { CallModel } from "./call.model";
   templateUrl: "./call.component.html",
   styleUrls: ["./call.component.scss"],
 })
-export class CallComponent implements OnInit {
+export class CallComponent extends BaseComponent implements OnInit {
   public pm: CallModel;
 
   constructor(
@@ -18,12 +21,13 @@ export class CallComponent implements OnInit {
     private readonly _router: Router,
     private readonly _callService: CallService,
     private readonly _dialog: MatDialog
-  ) {}
+  ) {
+    super();
+  }
 
   public ngOnInit(): void {
     this._route.data.subscribe((data: Data) => {
       this.pm = data.pm;
-      console.log(this.pm);
     });
   }
 
@@ -58,10 +62,25 @@ export class CallComponent implements OnInit {
   }
 
   public deleteCall(call: Call): void {
-    this._callService.deleteCallfromDB(call.id);
-    this._callService.getCalls().subscribe((calls: Call[]) => {
-      this.pm.calls = calls;
-    });
+    let dialogRef: MatDialogRef<ConfirmDialogComponent> = this._dialog.open(
+      ConfirmDialogComponent
+    );
+    dialogRef
+      .afterClosed()
+      .pipe(takeWhile(() => dialogRef !== null))
+      .subscribe(() => {
+        dialogRef = null;
+      });
+
+    dialogRef.componentInstance.onConfirm
+      .pipe(takeWhile(() => dialogRef !== null))
+      .subscribe(() => {
+        this._callService.deleteCallfromDB(call.id).subscribe(() => {
+          this._callService.getCalls().subscribe((calls: Call[]) => {
+            this.pm.calls = calls;
+          });
+        });
+      });
   }
 
   public createCall(): void {

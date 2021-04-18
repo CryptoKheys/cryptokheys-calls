@@ -1,8 +1,10 @@
-export class CallCreateModel {
-  public coins: any[] = [];
+import { Coin } from "../../model/coin.model";
 
-  constructor(coins: any[]) {
+export class CallCreateModel {
+  public coins: Coin[] = [];
+  public isCoinInfoLoading: boolean = false;
+
+  constructor(coins: Coin[]) {
     this.coins = coins;
-    console.log(coins);
   }
 }

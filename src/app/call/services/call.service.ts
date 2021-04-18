@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { forkJoin, Observable, of } from "rxjs";
+import { forkJoin, Observable, of, Subject } from "rxjs";
 import { catchError, map, mergeMap } from "rxjs/operators";
 import {
   AddResult,
@@ -9,28 +9,37 @@ import {
   CallDTO,
   CallInfo,
 } from "../model/call.model";
+import { Coin, CoinInfo } from "../model/coin.model";
 
 @Injectable({
   providedIn: "root",
 })
 export class CallService {
-  calls: Call[] = [];
+  private calls: Call[] = [];
+  private coins: Coin[] = [];
+
   callsList: CallDTO[] = [];
-  coinsList: any[] = [];
+
   firebaseURL =
     "https://ckcalls-default-rtdb.europe-west1.firebasedatabase.app";
   firebaseDB = "cktest";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.getCoinsList();
+  }
 
   public getCalls(refresh: boolean = false): Observable<Call[]> {
-    if (refresh && this.calls.length) {
+    if (!refresh && this.calls.length) {
       return of(this.calls);
     }
 
     const firebaseDbUrl: string = `${this.firebaseURL}/${this.firebaseDB}.json`;
     return this.http.get(firebaseDbUrl).pipe(
-      mergeMap((h: any) => {
+      mergeMap((h: { [id: string]: any }) => {
+        if (!h) {
+          return of([]);
+        }
+
         return forkJoin(
           Object.entries<{ [id: string]: any }>(h).map(([id, callDb]) => {
             if (!callDb.GeckoURL) {
@@ -76,28 +85,54 @@ export class CallService {
     };
   }
 
-  public getCoinsList(): Observable<any[]> {
-    if (!this.coinsList.length) {
+  public getCoinsList(): Observable<Coin[]> {
+    if (!this.coins.length) {
       return this.http
         .get(
           "https://api.coingecko.com/api/v3/coins/list?include_platform=true"
         )
         .pipe(
-          map((resp: any) => {
-            this.coinsList = resp;
-            return this.coinsList;
+          map((resp: Coin[]) => {
+            this.coins = resp;
+            return this.coins;
           }),
           catchError(this.handleError("getCoinsList", []))
         );
     }
 
-    return of(this.coinsList);
+    return of(this.coins);
   }
 
-  private getCallsInfo(): void {
-    this.callsList?.forEach((call) => {
-      this.singleCallInfo(call);
-    });
+  public getCoinInfo(coin: Coin): Observable<CoinInfo> {
+    let coinGeckoUrl: string = "https://api.coingecko.com/api/v3/coins/";
+    if (coin.platforms.ethereum) {
+      coinGeckoUrl += `ethereum/contract/${coin.platforms.ethereum}`;
+    } else {
+      coinGeckoUrl += `${coin.id}`;
+    }
+
+    return this.http.get(coinGeckoUrl).pipe(
+      map((coinInfo: any) => {
+        return {
+          coin: coin,
+          coinGeckoUrl: coinGeckoUrl,
+          urlImage: coinInfo.image.small,
+          currentPrice: coinInfo.market_data.current_price.usd,
+          marketCap: coinInfo.market_data.market_cap.usd,
+          mcapRank: coinInfo.market_data.market_cap_rank,
+          sentimentVotesUpPercentage: coinInfo.sentiment_votes_up_percentage,
+          priceChange24h: coinInfo.market_data.price_change_24h,
+          priceChangePercentage24h:
+            coinInfo.market_data.price_change_percentage_24h,
+          price_changePercentage7d:
+            coinInfo.market_data.price_change_percentage_7d,
+          priceChangePercentage14d:
+            coinInfo.market_data.price_change_percentage_14d,
+          priceChangePercentage30d:
+            coinInfo.market_data.price_change_percentage_30d,
+        };
+      })
+    );
   }
 
   private singleCallInfo(call: CallDTO, push?: boolean): void {
@@ -131,7 +166,8 @@ export class CallService {
     };
   }
 
-  addCallToDB(call?: CallDb): void {
+  public addCallToDB(call?: CallDb): Observable<void> {
+    const subject: Subject<void> = new Subject();
     const mockCall: CallDb = {
       author: "Mathieu",
       image:
@@ -160,7 +196,11 @@ export class CallService {
         if ("name" in res) {
           this.addCallToList(res.name, callToAdd);
         }
+        subject.next();
+        subject.complete();
       });
+
+    return subject.asObservable();
   }
 
   private addCallToList(dbID: string, callToAdd: CallDb): void {
@@ -174,13 +214,14 @@ export class CallService {
       .subscribe((res) => console.log(res));
   }
 
-  deleteCallfromDB(id: string): void {
-    this.http
+  public deleteCallfromDB(id: string): Observable<void> {
+    return this.http
       .delete(`${this.firebaseURL}/${this.firebaseDB}/${id}.json`)
-      .pipe(catchError(this.handleError("deleteCallfromDB", [])))
-      .subscribe((res) => {
-        this.deleteCallFromList(id);
-      });
+      .pipe(
+        map(() => {
+          this.deleteCallFromList(id);
+        })
+      );
   }
 
   private deleteCallFromList(id: string): void {

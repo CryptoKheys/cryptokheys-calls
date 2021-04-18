@@ -11,7 +11,7 @@ export class CallResolver implements Resolve<CallModel> {
 
   public resolve(): Observable<CallModel> {
     return forkJoin({
-      calls: this._callService.getCalls(),
+      calls: this._callService.getCalls(true),
     }).pipe(map((data) => new CallModel(data.calls, true)));
   }
 }
