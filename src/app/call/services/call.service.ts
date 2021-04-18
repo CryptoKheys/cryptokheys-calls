@@ -24,8 +24,12 @@ export class CallService {
     "https://ckcalls-default-rtdb.europe-west1.firebasedatabase.app";
   firebaseDB = "cktest";
 
+  private CG_SIMPLE_PRICE =
+    "https://api.coingecko.com/api/v3/simple/price?ids=";
+  private CG_SIMPLE_PRICE_QUERY_PARAM = "&vs_currencies=usd";
+
   constructor(private http: HttpClient) {
-    this.getCoinsList();
+    this.getCoinsList().subscribe();
   }
 
   public getCalls(refresh: boolean = false): Observable<Call[]> {
@@ -45,11 +49,16 @@ export class CallService {
             if (!callDb.GeckoURL) {
               return of(this.mapCall(id, callDb));
             }
-            return this.http.get(callDb.GeckoURL).pipe(
-              map((coinInfo: any) => {
-                return this.mapCall(id, callDb, coinInfo);
-              })
-            );
+
+            return this.http
+              .get(
+                `${this.CG_SIMPLE_PRICE}${callDb.id}${this.CG_SIMPLE_PRICE_QUERY_PARAM}`
+              )
+              .pipe(
+                map((coinInfo: any) => {
+                  return this.mapCall(id, callDb, coinInfo);
+                })
+              );
           })
         );
       }),
@@ -63,6 +72,7 @@ export class CallService {
   private mapCall(callDbId: string, callDb: any, coinInfo?: any): Call {
     return {
       id: callDbId,
+      coinId: callDb.id,
       name: callDb.name,
       author: callDb.author,
       image: callDb.image,
@@ -71,17 +81,7 @@ export class CallService {
       running: callDb.running,
       closedDate: callDb.closedDate,
       closedPrice: callDb.closedPrice,
-      currentPrice: coinInfo?.market_data.current_price.usd,
-      marketCap: coinInfo?.market_data.market_cap.usd,
-      marketCapRank: coinInfo?.market_data.market_cap_rank,
-      priceChange24h: coinInfo?.market_data.price_change_24h,
-      priceChangePercentage24h:
-        coinInfo?.market_data.price_change_percentage_24h,
-      priceChangePercentage7d: coinInfo?.market_data.price_change_percentage_7d,
-      priceChangePercentage14d:
-        coinInfo?.market_data.price_change_percentage_14d,
-      priceChangePercentage30d:
-        coinInfo?.market_data.price_change_percentage_30d,
+      currentPrice: coinInfo[callDb.id]?.usd,
     };
   }
 

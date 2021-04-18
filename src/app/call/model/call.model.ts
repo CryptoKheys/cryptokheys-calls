@@ -36,6 +36,7 @@ export interface AddResult {
 
 export interface Call {
   id?: string;
+  coinId?: string;
   name?: string;
   author?: string;
   image?: string;
