@@ -75,7 +75,7 @@ export class CallComponent extends BaseComponent implements OnInit {
     dialogRef.componentInstance.onConfirm
       .pipe(takeWhile(() => dialogRef !== null))
       .subscribe(() => {
-        this._callService.deleteCallfromDB(call.id).subscribe(() => {
+        this._callService.deleteCallfromDB(call._id).subscribe(() => {
           this._callService.getCalls().subscribe((calls: Call[]) => {
             this.pm.calls = calls;
           });

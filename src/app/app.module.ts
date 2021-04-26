@@ -9,16 +9,21 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { CallModule } from "./call/call.module";
 import { MatCardModule } from "@angular/material/card";
+import { HttpClientModule } from "@angular/common/http";
+import { MatButtonModule } from "@angular/material/button";
+import { UserComponent } from "./user/user.component";
 
 registerLocaleData(localeFr);
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, UserComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatCardModule,
+    HttpClientModule,
+    MatButtonModule,
   ],
   providers: [
     CallModule,

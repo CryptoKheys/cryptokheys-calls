@@ -1,4 +1,5 @@
 export interface CallDb {
+  _id?: string;
   author: string;
   image: string;
   id: string;
@@ -35,6 +36,7 @@ export interface AddResult {
 }
 
 export interface Call {
+  _id?: string;
   id?: string;
   coinId?: string;
   name?: string;

@@ -24,6 +24,8 @@ export class CallService {
     "https://ckcalls-default-rtdb.europe-west1.firebasedatabase.app";
   firebaseDB = "cktest";
 
+  backUrl = "http://localhost:3030/calls";
+
   private CG_SIMPLE_PRICE =
     "https://api.coingecko.com/api/v3/simple/price?ids=";
   private CG_SIMPLE_PRICE_QUERY_PARAM = "&vs_currencies=usd";
@@ -32,57 +34,13 @@ export class CallService {
     this.getCoinsList().subscribe();
   }
 
-  public getCalls(refresh: boolean = false): Observable<Call[]> {
+  public getCalls(refresh: boolean = false): Observable<any> {
     if (!refresh && this.calls.length) {
       return of(this.calls);
     }
 
-    const firebaseDbUrl: string = `${this.firebaseURL}/${this.firebaseDB}.json`;
-    return this.http.get(firebaseDbUrl).pipe(
-      mergeMap((h: { [id: string]: any }) => {
-        if (!h) {
-          return of([]);
-        }
-
-        return forkJoin(
-          Object.entries<{ [id: string]: any }>(h).map(([id, callDb]) => {
-            if (!callDb.GeckoURL) {
-              return of(this.mapCall(id, callDb));
-            }
-
-            return this.http
-              .get(
-                `${this.CG_SIMPLE_PRICE}${callDb.id}${this.CG_SIMPLE_PRICE_QUERY_PARAM}`
-              )
-              .pipe(
-                map((coinInfo: any) => {
-                  return this.mapCall(id, callDb, coinInfo);
-                })
-              );
-          })
-        );
-      }),
-      map((calls: Call[]) => {
-        this.calls = calls;
-        return this.calls;
-      })
-    );
-  }
-
-  private mapCall(callDbId: string, callDb: any, coinInfo?: any): Call {
-    return {
-      id: callDbId,
-      coinId: callDb.id,
-      name: callDb.name,
-      author: callDb.author,
-      image: callDb.image,
-      callPrice: callDb.callPrice,
-      callDate: callDb.callDate,
-      running: callDb.running,
-      closedDate: callDb.closedDate,
-      closedPrice: callDb.closedPrice,
-      currentPrice: coinInfo[callDb.id]?.usd,
-    };
+    const localUrl: string = "http://localhost:3030/calls";
+    return this.http.get(localUrl);
   }
 
   public getCoinsList(): Observable<Coin[]> {
@@ -103,6 +61,18 @@ export class CallService {
     return of(this.coins);
   }
 
+  private singleCallInfo(call: CallDTO, push?: boolean): void {
+    this.http
+      .get(call[1].GeckoURL)
+      .pipe(catchError(this.handleError("singleCallInfo", [])))
+      .subscribe((res) => {
+        // console.log(res);
+        call[2] = this.dispatchCallInfo(res);
+        if (push) {
+          this.callsList.push(call);
+        }
+      });
+  }
   public getCoinInfo(coin: Coin): Observable<CoinInfo> {
     let coinGeckoUrl: string = "https://api.coingecko.com/api/v3/coins/";
     if (coin.platforms.ethereum) {
@@ -134,20 +104,6 @@ export class CallService {
       })
     );
   }
-
-  private singleCallInfo(call: CallDTO, push?: boolean): void {
-    this.http
-      .get(call[1].GeckoURL)
-      .pipe(catchError(this.handleError("singleCallInfo", [])))
-      .subscribe((res) => {
-        // console.log(res);
-        call[2] = this.dispatchCallInfo(res);
-        if (push) {
-          this.callsList.push(call);
-        }
-      });
-  }
-
   dispatchCallInfo(GeckoData: any): CallInfo {
     return {
       current_price: GeckoData.market_data.current_price.usd,
@@ -200,6 +156,17 @@ export class CallService {
         subject.complete();
       });
 
+    this.http
+      .post<AddResult>("http://localhost:3030/calls", callToAdd)
+      .pipe(catchError(this.handleError("addCalltoDB", [])))
+      .subscribe((res) => {
+        if ("name" in res) {
+          this.addCallToList(res.name, callToAdd);
+        }
+        subject.next();
+        subject.complete();
+      });
+
     return subject.asObservable();
   }
 
@@ -215,13 +182,11 @@ export class CallService {
   }
 
   public deleteCallfromDB(id: string): Observable<void> {
-    return this.http
-      .delete(`${this.firebaseURL}/${this.firebaseDB}/${id}.json`)
-      .pipe(
-        map(() => {
-          this.deleteCallFromList(id);
-        })
-      );
+    return this.http.delete(`${this.backUrl}/${id}`).pipe(
+      map(() => {
+        this.deleteCallFromList(id);
+      })
+    );
   }
 
   private deleteCallFromList(id: string): void {
